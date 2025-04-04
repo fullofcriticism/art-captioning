@@ -1,0 +1,16 @@
+transformers==4.49.0
+timm
+flash_attn
+einops
+sacremoses
+gTTS
+tensorflow
+scikit-image
+pandas
+PIL
+random
+typing
+csv
+sklearn
+gtts
+os
