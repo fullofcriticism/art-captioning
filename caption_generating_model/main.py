@@ -1,9 +1,9 @@
 import os
 from data_loader import load_classes
-from model_utils import load_model, make_prediction, make_description_prediction
+from model_utils import load_model, make_prediction, make_description_prediction, make_translation
 from caption_generator import ArtDescriptionGenerator
 from text_to_speech import generate_audio
-from config import CLASSES_PATH, CLASSIFICATION_MODEL_NAME, DESCRIBING_MODEL_NAME, DEVICE
+from config import CLASSES_PATH, CLASSIFICATION_MODEL_NAME, DESCRIBING_MODEL_NAME,  TRANSLATION_MODEL_NAME, DEVICE
 
 def main():
     binarizer = load_classes(CLASSES_PATH)
@@ -17,7 +17,8 @@ def main():
 
     description = caption_generator.generate_description(predictions)
     
-    caption = make_description_prediction(DESCRIBING_MODEL_NAME, image_path, DEVICE)
+    english_caption = make_description_prediction(DESCRIBING_MODEL_NAME, image_path, DEVICE)
+    caption = make_translation(TRANSLATION_MODEL_NAME, english_caption, DEVICE)
     caption = description + ' ' + caption
 
     print("Сгенерированное описание:", caption)

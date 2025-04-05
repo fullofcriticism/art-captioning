@@ -2,7 +2,7 @@ import tensorflow as tf
 from skimage import io
 from skimage.transform import resize
 import numpy as np
-from transformers import AutoModelForCausalLM, AutoProcessor
+from transformers import AutoModelForCausalLM, AutoProcessor, AutoModelForSeq2SeqLM, AutoTokenizer
 from PIL import Image
 
 def load_classes_model(model_name):
@@ -23,6 +23,7 @@ def make_description_prediction(model_id, image_path, device):
     processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
     prompt = "<MORE_DETAILED_CAPTION>"
     inputs = processor(text=prompt, images=image, return_tensors="pt").to(device)
+
     generated_ids = model.generate(
         input_ids=inputs["input_ids"].cuda(),
         pixel_values=inputs["pixel_values"].cuda(),
@@ -40,7 +41,18 @@ def make_description_prediction(model_id, image_path, device):
         task=prompt,
         image_size=(image.width, image.height)
     )
-    
+
     parsed_answer = parsed_answer[prompt]
 
     return parsed_answer.capitalize()
+
+def make_translation(model_name, text, device):
+    
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    translation_model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    translation_model.to(device)
+    encoded_descr = tokenizer(text, return_tensors="pt")
+    translated_tokens = translation_model.generate(**encoded_descr.to(device), forced_bos_token_id=tokenizer.convert_tokens_to_ids("rus_Cyrl"))
+
+    return tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
+
