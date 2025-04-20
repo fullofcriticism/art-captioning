@@ -21,13 +21,15 @@ def main():
     if DEVICE: 
         english_caption = make_description_prediction(DESCRIBING_MODEL_NAME, image_path, DEVICE)
         caption = make_translation(TRANSLATION_MODEL_NAME, english_caption, DEVICE)
-        caption = description + ' ' + caption
         print("Сгенерированное описание:", caption)
     else: 
-        print("Нет доступа к GPU. Сгенерированное писание:", caption)
-        
+        caption = ''
+        print("Нет доступа к GPU, описание объектов на изображении не доступно.")
+    
+    description += ' ' + caption
+
     audio_name = "audio_description.mp3" # Введите желаемое название аудио-файла со сгенерированным описанием 
-    audio_path = generate_audio(caption, audio_name) 
+    audio_path = generate_audio(description, audio_name) 
     print(f"Аудиофайл сохранен как: {audio_path}")
 
 if __name__ == "__main__":
