@@ -1,5 +1,7 @@
-from fastapi import FastAPI 
+from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.exceptions import RequestValidationError
 import torch
 from PIL import Image
 import requests
@@ -9,7 +11,7 @@ from model_utils import load_model, make_prediction, make_description_prediction
 from caption_generator import ArtDescriptionGenerator
 from text_to_speech import generate_audio
 from config import CLASSES_PATH, CLASSIFICATION_MODEL_NAME, DESCRIBING_MODEL_NAME,  TRANSLATION_MODEL_NAME
-from http_models import Request, Response
+from http_models import ImageRequest, ImageResponse
 
 
 app = FastAPI()
@@ -18,14 +20,24 @@ binarizer = load_classes(CLASSES_PATH)
 model, image_shape = load_model(CLASSIFICATION_MODEL_NAME)
 caption_generator = ArtDescriptionGenerator(use_text_model=False)
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content=jsonable_encoder({"errorCode": exc.errors(), 
+                                  "errorMessage": exc.body}),
+        )
 
-@app.post("/predict/classes", response_model=Response)
-async def predict_classes(body: Request):
+@app.post("/predict/classes", response_model=ImageResponse)
+async def predict_classes(body: ImageRequest):
     file_path = body.filePath
     predictions = make_prediction(model, binarizer, file_path, image_shape)
-    return JSONResponse(content={"predictedClasses": predictions})
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=jsonable_encoder({"predictedClasses": predictions})
+        )
 
-@app.post("/generate/caption", response_model=Response)
+@app.post("/generate/caption", response_model=ImageResponse)
 async def generate_caption(body: Request):
     file_path = body.imagePath
     device = body.device
@@ -44,11 +56,14 @@ async def generate_caption(body: Request):
     
     audio_path = generate_audio(caption, audio_name)
     
-    return JSONResponse(content={"predictedClasses": predictions, 
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=jsonable_encoder({"predictedClasses": predictions, 
                                  "predictedClassesCaption": description, 
                                  "fullDescription": caption, 
                                  "audioFile": FileResponse(audio_path),
                                  "audioPath": audio_path})
+        )
 
 
 if __name__ == "__main__":
