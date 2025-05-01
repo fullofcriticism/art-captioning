@@ -65,9 +65,9 @@ async def generate_caption(body: Request):
             )
     except:
         return JSONResponse(
-        status_code=status.HTTP_422_,
-        content=jsonable_encoder({"errorCode": exc.errors(), 
-                                  "errorMessage": exc.body}),
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=jsonable_encoder({"errorCode": 'UnprocessableEntity', 
+                                  "errorMessage": 'Error occured and request cannot be processed'}),
         )
     
 
