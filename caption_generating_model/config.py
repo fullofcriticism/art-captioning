@@ -1,5 +1,5 @@
 CLASSES_PATH = 'data/toy-art-data/classes_ru.txt'
-CLASSIFICATION_MODEL_NAME = 'results_v1/model_resnet_ru_v1.keras'
+CLASSIFICATION_MODEL_NAME = 'results_v2/model_resnet_ru_v2.keras'
 DESCRIBING_MODEL_NAME = 'microsoft/Florence-2-large'
 TRANSLATION_MODEL_NAME = "Helsinki-NLP/opus-mt-en-ru"
 DEVICE = "cuda:0"
