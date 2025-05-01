@@ -45,26 +45,31 @@ async def generate_caption(body: Request):
 
     predictions = make_prediction(model, binarizer, file_path, image_shape)
     description = caption_generator.generate_description(predictions)
-
-    if device: 
-        english_caption = make_description_prediction(DESCRIBING_MODEL_NAME, file_path, device)
-        caption = make_translation(TRANSLATION_MODEL_NAME, english_caption, device)
-    else: 
-        caption = ''
-
-    description += ' ' + caption
+    try: 
+        if device: 
+            english_caption = make_description_prediction(DESCRIBING_MODEL_NAME, file_path, device)
+            caption = make_translation(TRANSLATION_MODEL_NAME, english_caption, device)
+        else: 
+            caption = ''
+        description += ' ' + caption
     
-    audio_path = generate_audio(caption, audio_name)
+        audio_path = generate_audio(caption, audio_name)
     
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder({"predictedClasses": predictions, 
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=jsonable_encoder({"predictedClasses": predictions, 
                                  "predictedClassesCaption": description, 
                                  "fullDescription": caption, 
                                  "audioFile": FileResponse(audio_path),
                                  "audioPath": audio_path})
+            )
+    except:
+        return JSONResponse(
+        status_code=status.HTTP_422_,
+        content=jsonable_encoder({"errorCode": exc.errors(), 
+                                  "errorMessage": exc.body}),
         )
-
+    
 
 if __name__ == "__main__":
     import uvicorn
