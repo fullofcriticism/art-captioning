@@ -5,8 +5,6 @@ import numpy as np
 from transformers import AutoModelForCausalLM, AutoProcessor, AutoModelForSeq2SeqLM, AutoTokenizer
 from PIL import Image
 
-
-
 def load_classes_model(model_name):
     model = tf.keras.models.load_model(model_name)
     image_shape = (299, 299, 3)
@@ -48,13 +46,13 @@ def make_description_prediction(model_id, image_path, device):
 
     return parsed_answer.capitalize()
 
-def make_translation(model_name, text, device):
+def make_translation(model_name, text, TRANSLATION_TOKEN_ID):
     
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     translation_model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-    translation_model.to(device)
+
     encoded_descr = tokenizer(text, return_tensors="pt")
-    translated_tokens = translation_model.generate(**encoded_descr.to(device), forced_bos_token_id=tokenizer.convert_tokens_to_ids("rus_Cyrl"))
+    translated_tokens = translation_model.generate(**encoded_descr, forced_bos_token_id=tokenizer.convert_tokens_to_ids(TRANSLATION_TOKEN_ID))
 
     return tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
 
