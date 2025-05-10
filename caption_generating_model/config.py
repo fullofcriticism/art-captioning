@@ -1,5 +1,5 @@
 CLASSES_PATH = 'data/toy-art-data/classes_ru.txt'
-CLASSIFICATION_MODEL_NAME = 'results_efficientnet/v2/model_en_v2.keras'
+CLASSIFICATION_MODEL_NAME = 'results/ResNet/v3/model_resnet_ru_v3.keras'
 DESCRIBING_MODEL_NAME = 'microsoft/Florence-2-large'
 TRANSLATION_MODEL_NAME = "facebook/nllb-200-distilled-1.3B"
 TRANSLATION_TOKEN_ID = "rus_Cyrl"
