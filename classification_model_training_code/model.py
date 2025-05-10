@@ -1,5 +1,5 @@
 import tensorflow as tf
-from keras.applications import ResNet50
+from keras.applications import EfficientNetV2L
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout
 from keras.layers import BatchNormalization
@@ -33,5 +33,5 @@ def load_pretrained_model(pretrained_model_path=None, input_shape=None, output_s
     if pretrained_model_path:
         return tf.keras.models.load_model(pretrained_model_path)
     else:
-        base_model = ResNet50(weights="imagenet", include_top=False, pooling="avg")
+        base_model = EfficientNetV2L(weights="imagenet", include_top=False, pooling="avg")
         return create_model(base_model, input_shape, output_shape)

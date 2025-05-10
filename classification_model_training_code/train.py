@@ -74,8 +74,8 @@ def main():
     plot_graphs(history, "precision", MODEL_NAME)
     plot_graphs(history, "binary_accuracy", MODEL_NAME)
     
-    y_test = test_dataloader.y[:100]
-    y_pred = model.predict(test_dataloader[0:100]).round()
+    y_test = test_dataloader[:2000][1]
+    y_pred = model.predict(test_dataloader[:2000][0]).round()
     print(classification_report(y_test, y_pred, target_names=binarizer.classes_))
 
 if __name__ == "__main__":
