@@ -12,5 +12,6 @@ class ImageResponse(BaseModel):
     predictedClasses: list[str]
     predictedClassesCaption: str 
     fullDescription: str | None = None
+    brailleDescription: str
     audioFile: FileResponse
     audioPath: str

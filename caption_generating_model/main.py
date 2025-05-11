@@ -4,6 +4,7 @@ from model_utils import load_model, make_prediction, make_description_prediction
 from caption_generator import ArtDescriptionGenerator
 from text_to_speech import generate_audio
 from config import CLASSES_PATH, CLASSIFICATION_MODEL_NAME, DESCRIBING_MODEL_NAME,  TRANSLATION_MODEL_NAME, DEVICE, TRANSLATION_TOKEN_ID
+from braille_translator import text_to_braille
 
 def main():
     binarizer = load_classes(CLASSES_PATH)
@@ -27,7 +28,9 @@ def main():
         print("Нет доступа к GPU, описание объектов на изображении не доступно.")
     
     description += ' ' + caption
-
+    braille_description = text_to_braille(description)
+    
+    print(f"Полученное описание в шрифте Брайля: {braille_description}")
     audio_name = "audio_description.mp3" # Введите желаемое название аудио-файла со сгенерированным описанием 
     audio_path = generate_audio(description, audio_name) 
     print(f"Аудиофайл сохранен как: {audio_path}")

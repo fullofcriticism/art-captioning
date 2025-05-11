@@ -12,6 +12,7 @@ from caption_generator import ArtDescriptionGenerator
 from text_to_speech import generate_audio
 from config import CLASSES_PATH, CLASSIFICATION_MODEL_NAME, DESCRIBING_MODEL_NAME,  TRANSLATION_MODEL_NAME
 from http_models import ImageRequest, ImageResponse
+from braille_translator import text_to_braille
 
 
 app = FastAPI()
@@ -54,12 +55,14 @@ async def generate_caption(body: Request):
         description += ' ' + caption
     
         audio_path = generate_audio(caption, audio_name)
+        braille_description = text_to_braille(description)
     
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content=jsonable_encoder({"predictedClasses": predictions, 
                                  "predictedClassesCaption": description, 
                                  "fullDescription": caption, 
+                                 "brailleDescription": braille_description,
                                  "audioFile": FileResponse(audio_path),
                                  "audioPath": audio_path})
             )
